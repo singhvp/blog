@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Regression on R, Statistics and Visualization</title>
+    <link>/categories/regression/</link>
+    <description>Recent content in Regression on R, Statistics and Visualization</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 13 Feb 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/regression/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Linear Regression</title>
+      <link>/2020/02/13/linear-regression/</link>
+      <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/02/13/linear-regression/</guid>
+      <description>Introduction Linear Regression is one of the most simple, intuitive, and easy to learn modeling technique which has been heavily used in predicting a quantitative response and it falls under classification of Supervised Learning. A simple search of “Linear Regression” on Google scholar returns 4+ Million result and there is so much information available online for free explaining Linear Regression in detail. Today there are many sophisticated techniques available for prediction and prescription analytic but a solid foundation in Linear Regression is must to understand nuances of modeling before you can jump and start applying more advanced techniques.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,25 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on site title</title>
-    <link>your_site_url_address/post/</link>
-    <description>Recent content in Posts on site title</description>
+    <title>Posts on R, Statistics and Visualization</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on R, Statistics and Visualization</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 13 Feb 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="your_site_url_address/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Hello R Markdown</title>
-      <link>your_site_url_address/post/2015-07-23-r-rmarkdown/</link>
-      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      <title>Linear Regression</title>
+      <link>/2020/02/13/linear-regression/</link>
+      <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>your_site_url_address/post/2015-07-23-r-rmarkdown/</guid>
-      <description>R MarkdownThis is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars)## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+      <guid>/2020/02/13/linear-regression/</guid>
+      <description>Introduction Linear Regression is one of the most simple, intuitive, and easy to learn modeling technique which has been heavily used in predicting a quantitative response and it falls under classification of Supervised Learning. A simple search of “Linear Regression” on Google scholar returns 4+ Million result and there is so much information available online for free explaining Linear Regression in detail. Today there are many sophisticated techniques available for prediction and prescription analytic but a solid foundation in Linear Regression is must to understand nuances of modeling before you can jump and start applying more advanced techniques.</description>
     </item>
     
   </channel>

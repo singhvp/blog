@@ -439,7 +439,7 @@ The plot reveals that for last few decades we have a permanent shift towards hig
 </div>
 <div id="mei" class="section level4">
 <h4>2) MEI</h4>
-<p>MEI i.e. “Multivariate El Nino Southern Oscillation index by Year” is a prime predictor for global climate disruptions. MEI is a time series type of data and its a combination of multiple variables which contains both atmospheric and oceanic variables. Real time monitoring of MEI enables goverments to tackle regional issue affected by climate and plan for food and water supply, health and safety etc.</p>
+<p>MEI i.e. “Multivariate El Nino Southern Oscillation index by Year” is a prime predictor for global climate disruptions. MEI is a time series type of data and its a combination of multiple variables which contains both atmospheric and oceanic variables. Real time monitoring of MEI enables goverments to tackle regional issue affected by climate and plan for food and water supply, health and safety etc.</p>
 <pre class="r"><code>climate1 %&gt;%
   arrange(year_month) %&gt;%
   ggplot() + 
@@ -677,7 +677,7 @@ ggplot(aug_model1, aes(CO2, Temp)) +
 ##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0.622         0.620 0.112      464. 1.74e-61     2   221. -436. -425.
-## # ... with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;</code></pre>
+## # … with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;</code></pre>
 <p>As we can see R-squared value is 0.62 (1 is perfect prediction), Residual Standard Error (RSE) is 0.11 (minimize as much as possible), and F-statistics is 463.59 (larger the better).</p>
 </div>
 <div id="making-prediction" class="section level3">
@@ -701,7 +701,7 @@ climate_test %&gt;%
 ##  8 0.358 0.505
 ##  9 0.402 0.491
 ## 10 0.362 0.494
-## # ... with 14 more rows</code></pre>
+## # … with 14 more rows</code></pre>
 <p>Calculate Mean Squared Error (MSE)</p>
 <pre class="r"><code># MSE (Mean Square Error)
 climate_test %&gt;%
@@ -854,28 +854,28 @@ summary(model3)</code></pre>
 ##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0.622         0.620 0.112      464. 1.74e-61     2   221. -436. -425.
-## # ... with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;
+## # … with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;
 ## 
 ## $model2
 ## # A tibble: 1 x 11
 ##   r.squared adj.r.squared  sigma statistic  p.value    df logLik   AIC   BIC
 ##       &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0.751         0.744 0.0917      104. 1.94e-78     9   280. -540. -504.
-## # ... with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;
+## # … with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;
 ## 
 ## $model3
 ## # A tibble: 1 x 11
 ##   r.squared adj.r.squared  sigma statistic  p.value    df logLik   AIC   BIC
 ##       &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0.747         0.742 0.0920      137. 9.15e-80     7   278. -540. -511.
-## # ... with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;
+## # … with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;
 ## 
 ## $model4
 ## # A tibble: 1 x 11
 ##   r.squared adj.r.squared  sigma statistic  p.value    df logLik   AIC   BIC
 ##       &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0.751         0.745 0.0916      119. 1.77e-79     8   280. -542. -509.
-## # ... with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;</code></pre>
+## # … with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;</code></pre>
 <p>It is interesting to note that the step function does not address the collinearity of the variables, except that adding highly correlated variables will not improve the <span class="math inline">\(R^2\)</span> significantly. The consequence of this is that the step function will not necessarily produce a very interpretable model - just a model that has balanced quality and simplicity for a particular weighting of quality and simplicity (AIC). Looking at the data above its clear that <em>model2</em>, <em>model3</em> and <em>model4</em> are roughly same in terms of quality.</p>
 <p>Personally I’d use <em>model3</em> for its interpretability and also because it addresses collinearity issue head on.</p>
 </div>
@@ -974,7 +974,7 @@ Interpretation of above plot is similar to Residual vs. Fitted values</p>
 ##  8 0.358 0.403  2007     8 -0.44   382  1779.  320.     246.     537. 1366.
 ##  9 0.402 0.349  2007     9 -1.16   381. 1794.  321.     246.     537. 1366.
 ## 10 0.362 0.354  2007    10 -1.14   381. 1802.  321.     246.     537. 1366.
-## # ... with 14 more rows, and 1 more variable: Aerosols &lt;dbl&gt;</code></pre>
+## # … with 14 more rows, and 1 more variable: Aerosols &lt;dbl&gt;</code></pre>
 <p>Comparing MSE of model3 versus model1:</p>
 <pre class="r"><code>climate_test %&gt;%
   gather_predictions(model1, model3) %&gt;%

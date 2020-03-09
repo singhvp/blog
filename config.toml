@@ -1,96 +1,47 @@
-# Site settings
 baseurl = "https://www.vinaysingh.rbind.io/"
-# HTML Language Code Reference, such as en, zh-cn
-languageCode = "en"
+languageCode = "en-us"
 title = "R, Statistics and Visualization"
-theme = "hugo-theme-cactus-plus"
-# Enter your tracking code to enable Google Analytics
+theme = "hugo-lithium-theme"
 googleAnalytics = "UA-133505036-1"
-hasCJKLanguage = false
-
-# Added to theme
+disqusShortname = ""
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 enableEmoji = true
+
 [permalinks]
-    post = "/:year/:slug/"
+    post = "/:year/:month/:day/:slug/"
+
+[[menu.main]]
+    name = "Posts"
+    url = "/"
+    weight = 1
+[[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 2
+[[menu.main]]
+    name = "GitHub"
+    url = "https://github.com/singhvp"
+    weight = 3
+[[menu.main]]
+    name = "LinkedIn"
+    url = "https://www.linkedin.com/in/vinaypratapsingh/"
+    weight = 4
 
 [params]
-	name = "Vinay Singh"
-	description = "R, Statistics and Visualization"
-	bio = "R, Statistics and Visualization"
-	# Enter optionally your twitter account
-	twitter = "vinaypratap"
-	enableRSS = true
+    description = "R, Statistics and Visualizatio"
 
-	# Disqus comment
-	disqusShortname = "discuss-stats"
-	# Disable disqus comments by set `enableDisqus = "false"`
-	enableDisqus = false
+    # options for highlight.js (version, additional languages, and theme)
+    highlightjsVersion = "9.11.0"
+    highlightjsCDN = "//cdn.bootcss.com"
+    highlightjsLang = ["r", "yaml"]
+    highlightjsTheme = "github"
 
-	# Duoshuo comment
-	duoshuoShortname = "your_duoshuo_short_name"
-	# Disable duoshuo comments by set `enableDuoshuo = "false"`
-	enableDuoshuo = false
+    MathJaxCDN = "//cdn.bootcss.com"
+    MathJaxVersion = "2.7.1"
 
-	enableGithubIssuesTips = false
-
-	# Enable googleAnalytics
-	enableGoogleAnalytics = true
-
-	# Enable baiduAnalytics
-	enableBaiduAnalytics = false
-	# Baidu Tongji Code
-	baiduAnalytics = 'your_baidu_tongji_code'
-
-	# Add custom assets with their paths relative to the static folder
-	customCSS = []
-	customJS  = []
-
-	# The variables below are optionally too and can be used to
-	# translate or customize each string of the theme.
-
-	# Navigation links
-	home = ""
-	about = ""
-	archive = ""
-	subscribe = ""
-	tags = ""
-	# Pagination links
-	olderPosts = ""
-	newerPosts = ""
-	readMore = ""
-	copyright = ""
-	# Sharing options and author information in posts
-	aboutAuthor = "Manufacturing guy dabbling with Statistics"
-	tweet = ""
-	share = ""
-	# 404 page
-	title404 = ""
-	subtitle404 = ""
-
-	# Choose a font for the social icons in the footer. Either "mono-social" or "font-awesome"
-	iconFont = "font-awesome"
-  # The social icons can be styled differently if you use mono as font - circle, rounded, or empty
-  socialIconStyle = ""
-
-
-# Add additional social link entries underneath
-[social]
-  twitter-square = "https://twitter.com/vinaypratap"
-  github-square = "https://github.com/singhvp"
-#  instagram = "https://www.instagram.com//"
-  linkedin-square = "https://www.linkedin.com/in/vinaypratapsingh/"
-  500px = "https://500px.com/thomasp85"
-
-[outputs]
-home = [ "HTML", "RSS", "RFEED"]
-
-[outputFormats]
-[outputFormats.RSS]
-mediatype = "application/rss"
-baseName = "feed"
-
-[outputFormats.RFEED]
-mediatype = "application/rss"
-baseName = "feed_r"
-noUgly = true
+    # my change
+    #[params.logo]
+    #url = "logo.png"
+    #width = 50
+    #height = 50
+    #alt = "Logo"
