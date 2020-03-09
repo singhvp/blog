@@ -72,22 +72,23 @@
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Linear Regression is one of the most simple, intuitive, and easy to learn modeling technique which has been heavily used in predicting a quantitative response and it falls under classification of Supervised Learning. A simple search of “Linear Regression” on Google scholar returns 4+ Million result and there is so much information available online for free explaining Linear Regression in detail. Today there are many sophisticated techniques available for prediction and prescription analytic but a solid foundation in Linear Regression is must to understand nuances of modeling before you can jump and start applying more advanced techniques. In it’s simplest form, linear model is expressed as:</p>
+<p>Linear Regression is one of the most simple, intuitive, and widely used modeling technique which primarily predicts a quantitative response and thus falls under classification of Supervised Learning. A search on Google Scholar for the term “Linear Regression” returns 4+ million result and there are many good quality courses available online explaining Linear Regression for free. Today there are many sophisticated techniques available for predictive and prescriptive analytics but a solid foundation in Linear Regression is must to understand nuances of modeling before dealing with more advanced techniques.</p>
+<p>In it’s simplest form, linear model is expressed as:</p>
 <p><span class="math display">\[y = \beta_0 + \beta_1x_1 + \beta_2x_2 + ….. + \beta_kx_k + \epsilon\]</span></p>
 <p>where:</p>
 <ul>
 <li><span class="math inline">\(y\)</span> is quantitative response variable i.e basically what we have to predict</li>
 <li><span class="math inline">\(\beta_0\)</span> is the intercept or slope and it’s not multiplied with any feature or predictor variable</li>
 <li><span class="math inline">\(x_1, x_2, ..., x_k\)</span> are predictor variables</li>
-<li><span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta2\)</span> … <span class="math inline">\(\beta_k\)</span> are coefficients of their respective predictor variables</li>
-<li>the <span class="math inline">\(\epsilon\)</span> is the error term. It’s the difference between actual and predicted outcomes. In Linear Regression we assume that we’ll make many positive and negative errors which are small but only few large errors. We will see this in detail when we start analyzing residuals later in the post.</li>
+<li><span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span> … <span class="math inline">\(\beta_k\)</span> are coefficients of their respective predictor variables</li>
+<li>the <span class="math inline">\(\epsilon\)</span> is the error term. It’s the difference between actual and predicted outcomes. In Linear Regression we assume that we’ll make many positive and negative errors which are small but only few large errors. We will b analyzing residuals later in the post.</li>
 </ul>
 </div>
 <div id="climate-change" class="section level1">
 <h1>Climate Change</h1>
+<p>We will use “climate_change” data provided in course <a href="https://www.edx.org/course/the-analytics-edge-0">The Analytical Edge</a> offered by MIT through <a href="https://www.edx.org">edX</a> for this exercise.</p>
 <div id="preparing-data" class="section level2">
 <h2>Preparing Data</h2>
-<p>We will use “climate_change” data provided in course <a href="https://www.edx.org/course/the-analytics-edge-0">The Analytical Edge</a> offered by MIT through <a href="https://www.edx.org">edX</a> for this exercise.</p>
 <p>There have been many studies documenting that the average global temperature has been increasing over the last century. The consequences of a continued rise in global temperature will be dire. Rising sea levels and an increased frequency of extreme weather events will affect billions of people.</p>
 <p>In this problem, we will attempt to study the relationship between average global temperature and several other factors.</p>
 <p>The file <a href="https://vinaysingh.rbind.io/post/climate_change.csv">climate_change.csv</a> contains climate data from May 1983 to December 2008. The available variables include:</p>
@@ -101,8 +102,7 @@
 <li>MEI: multivariate El Nino Southern Oscillation index (MEI), a measure of the strength of the <a href="http://en.wikipedia.org/wiki/El_nino">El Nino/La Nina-Southern Oscillation</a> (a weather effect in the Pacific Ocean that affects global temperatures). This data comes from the <a href="http://www.esrl.noaa.gov/psd/enso/mei/table.html">ESRL/NOAA Physical Sciences Division</a>.</li>
 </ul>
 <p>We start with loading all required packages we need for data analysis.</p>
-<pre class="r"><code># packages
-library(tidyverse)  
+<pre class="r"><code>library(tidyverse)  
 library(psych)
 library(broom)
 library(modelr)
@@ -369,9 +369,8 @@ Temp
 </tr>
 </tbody>
 </table>
-<p>Knwoing this is a big dataset, it’d be very beneficial is somehow we can understand the structure of this dataset. R provides a function <code>str()</code> just for this purpose.</p>
-<pre class="r"><code># structure of dataset
-str(climate)</code></pre>
+<p>When we’re dealing with an unknown dataset, it’s always a good first step to look at the structure of the dataset. R provides a function <code>str()</code> exactly for this purpose.</p>
+<pre class="r"><code>str(climate)</code></pre>
 <pre><code>## Classes &#39;spec_tbl_df&#39;, &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;: 308 obs. of  11 variables:
 ##  $ Year    : num  1983 1983 1983 1983 1983 ...
 ##  $ Month   : num  5 6 7 8 9 10 11 12 1 2 ...
@@ -398,10 +397,9 @@ str(climate)</code></pre>
 ##   ..   Aerosols = col_double(),
 ##   ..   Temp = col_double()
 ##   .. )</code></pre>
-<p>We can see that all variables are of “numerical” type and we have 11 of them with 308 observations.</p>
-<p>Next, we will use <code>summary()</code> function to get a quick and dirty numerical summary of dataset.</p>
-<pre class="r"><code># summary of dataset
-summary(climate)</code></pre>
+<p>We can see there are 11 “numerical” variables with 308 observations.</p>
+<p>Next, we will use <code>summary()</code> function to get a quick summary of dataset.</p>
+<pre class="r"><code>summary(climate)</code></pre>
 <pre><code>##       Year          Month             MEI               CO2       
 ##  Min.   :1983   Min.   : 1.000   Min.   :-1.6350   Min.   :340.2  
 ##  1st Qu.:1989   1st Qu.: 4.000   1st Qu.:-0.3987   1st Qu.:353.0  
@@ -423,11 +421,11 @@ summary(climate)</code></pre>
 ##  Mean   :0.01666   Mean   : 0.2568  
 ##  3rd Qu.:0.01260   3rd Qu.: 0.4073  
 ##  Max.   :0.14940   Max.   : 0.7390</code></pre>
-<p>In a single line code we can see statistical summary of all variables in dataset. This step is very helpful in identifying outliers or any anomaly in data.</p>
+<p>In a single line code we can see statistical numerical summary of all variables in dataset. This step is very helpful in identifying outliers or any anomaly in data.</p>
 </div>
 <div id="exploratory-data-analysis-eda" class="section level2">
 <h2>Exploratory Data Analysis (EDA)</h2>
-<p>Before we start with model building, it makes whole lot of sense to get ourselves familiarized with the data. This initial step is known as “Exploratory Data Analysis” or EDA for short. There are no hard and fast rules for this phase. I guess it depends on your intuition and asking meaningful questions as you learn more about the data itself. Lets beging by analyzing each variable one by one.</p>
+<p>Before we start with model building, it makes sense to get ourselves familiarized with the data. This initial step is known as “Exploratory Data Analysis” or EDA for short. There are no hard and fast rules for this phase. It depends on your intuition and asking meaningful questions as you learn more about the data itself. Lets begin by analyzing each variable one by one.</p>
 <div id="temperature" class="section level4">
 <h4>1) Temperature</h4>
 <p>Temperature is the response variable in this exercise.</p>
@@ -435,13 +433,14 @@ summary(climate)</code></pre>
 climate1 &lt;- climate %&gt;%
   mutate(year_month = ymd(paste(climate$Year, climate$Month, truncated = 1))) 
 
+# plotting Tempearture-Year 
 ggplot(climate1, aes(year_month, Temp)) + 
   geom_line() + 
   geom_smooth(se=FALSE, linetype = &quot;dotted&quot;) + 
   labs(title = &quot;Temperature (1983-2010)&quot;,
        x = &quot;Year&quot;, 
        y = &quot;Temperature&quot;) +
-  theme(plot.title = element_text(hjust = 0.5))</code></pre>
+  theme_minimal()</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/temperature%20by%20year-month-1.png" width="672" /></p>
 <p>We can see from the plot that there has been a steady rise in temperature over the years but since 2005 the curve has plateaued off. If its a permanent shift in the trend or seasonality, we don’t know and discussing it is beyond the scope of this post. However, lets see if there’s any seasonality to temperature across the year.</p>
 <pre class="r"><code># adding right and left hand sided labels
@@ -480,8 +479,9 @@ ggplot(climate1, aes(as.factor(Month), Temp)) +
 <p>We can see that generally the temperature has been steadily rising across years (same as last plot) but I find this plot is little bit cluttered, so lets try another approach and plot a ‘Temperature-density’ distribution.</p>
 <pre class="r"><code>ggplot(climate1, aes(x = Temp, y = as.factor(Year))) + 
   geom_density_ridges_gradient(aes(fill = ..x..), 
-                               scale = 3, size = 0.3, alpha = 0.5) +
-  scale_fill_gradientn(colours = c(&quot;#87CEFA&quot;, &quot;#FFFFE0&quot;, &quot;#FF0000&quot;),
+                               scale = 3, size = 0.3, alpha = 0.) +
+  geom_vline(xintercept = 0.5, alpha = 0.5, color = &quot;red&quot;, linetype = &quot;dotted&quot;) +
+   scale_fill_gradientn(colours = c(&quot;#87CEFA&quot;, &quot;#FFFFE0&quot;, &quot;#FF0000&quot;),
                        name = &quot;Temp&quot;) +
   labs(title = &#39;Temperature density&#39;,
        subtitle = &quot;Temperature is difference in degrees Celsius between the \n average global temperature in that period and a reference value&quot;) + 
@@ -490,7 +490,7 @@ ggplot(climate1, aes(as.factor(Month), Temp)) +
   ylab(&quot;Year&quot;) + 
   theme_classic()</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/Temperature%20density%20by%20year-1.png" width="672" />
-The plot reveals that for last few decades we have a permanent shift towards higher temperature. Although there is a dip from 2005 through 2008 as we did see in other plots, we notice that that extreme temperatures (&gt;0.5° C) occurred in all years since 2000.</p>
+The plot reveals that for last few decades we have a permanent shift towards higher temperature. Although there is a dip from 2005 through 2008 as we did see in other plots, we notice that that extreme temperatures (&gt;0.5°C) occurred in all years since 2000.</p>
 </div>
 <div id="mei" class="section level4">
 <h4>2) MEI</h4>
@@ -507,11 +507,11 @@ The plot reveals that for last few decades we have a permanent shift towards hig
   theme(plot.title = element_text(hjust = 0.5)) +
   theme_minimal()</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/MEI%20plot-1.png" width="672" /></p>
-<p>There is definitely a seasonality to this MEI but not a continuous positive or negative trend over the years.</p>
+<p>There is definitely a seasonality to MEI but not a continuous positive or negative trend over the years.</p>
 </div>
 <div id="carbon-dioxide" class="section level4">
 <h4>3) Carbon dioxide</h4>
-<p>Carbon dioxide is a Greenhouse house which basically traps the solar enegery and helps warm up the planet. Since Industrial revolution humans have significantly contributed to natrually occurring <span class="math inline">\(CO_2\)</span> levels which might have significant impact on increasing Global temperature. The <span class="math inline">\(CO_2\)</span> levels have been constantly increasing in atmosphere since this data is collected. It’d be interesting to note how does temperature correlate with <span class="math inline">\(CO_2\)</span> levels.</p>
+<p>Carbon dioxide is a Greenhouse house which traps the solar enegery and helps warm up the planet. Since Industrial revolution humans have significantly contributed to natrually occurring <span class="math inline">\(CO_2\)</span> levels which might have significant impact on increasing Global temperature. The <span class="math inline">\(CO_2\)</span> levels have been constantly increasing in atmosphere since this data is collected. In model building it’d be interesting to know how does temperature correlate with <span class="math inline">\(CO_2\)</span> levels.</p>
 <pre class="r"><code>climate1 %&gt;%
   arrange(year_month) %&gt;%
   ggplot(aes(year_month, CO2)) + 
@@ -521,12 +521,13 @@ The plot reveals that for last few decades we have a permanent shift towards hig
        caption = &quot;Source: ESRL/NOAA Global Monitoring Division&quot;) + 
   xlab(&quot;Year&quot;) +
   ylab(&quot;CO2 (ppmv)&quot;) + 
-  theme(plot.title = element_text(hjust = 0.5))</code></pre>
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_classic()</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/Carbon%20Dioxide%20plot-1.png" width="672" /></p>
 </div>
 <div id="methane" class="section level4">
 <h4>4) Methane</h4>
-<p>Methane, also a Greenhouse gas, traps more energy than Carbon dioxide. We can see that its levels are constantly rising too however we notice that the curve has somewhat flattened around 2000.</p>
+<p>Methane is also a Greenhouse gas and traps more energy than Carbon dioxide. We can see that its levels are on constantly rise too, however we notice that the curve has somewhat flattened around 2000.</p>
 <pre class="r"><code>climate1 %&gt;%
   arrange(year_month) %&gt;%
   ggplot(aes(year_month, CH4)) + 
@@ -536,7 +537,8 @@ The plot reveals that for last few decades we have a permanent shift towards hig
        caption = &quot;Source: ESRL/NOAA Global Monitoring Division&quot;) + 
   xlab(&quot;Year&quot;) +
   ylab(&quot;CH4 (ppmv)&quot;) + 
-  theme(plot.title = element_text(hjust = 0.5))</code></pre>
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  theme_classic()</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/Methane%20plot-1.png" width="672" /></p>
 </div>
 <div id="nitrous-oxide" class="section level4">
@@ -556,7 +558,7 @@ The plot reveals that for last few decades we have a permanent shift towards hig
 </div>
 <div id="cfc-11-and-cfc-12" class="section level4">
 <h4>6) CFC-11 and CFC-12</h4>
-<p>We can see that after rising steadily since 1995-2000 there is a decline in levels of CFC-11 and CFC-12. Read more about <a href="https://en.wikipedia.org/wiki/Kyoto_Protocol">Kyoto protocol</a> and <a href="https://en.wikipedia.org/wiki/Montreal_Protocol">Montreal protocol</a> to understand the drivers behind this decline.</p>
+<p>We can see from the plots below that after rising steadily through 1995-2000 there is a decline in levels of CFC-11 and CFC-12. Read more about <a href="https://en.wikipedia.org/wiki/Kyoto_Protocol">Kyoto protocol</a> and <a href="https://en.wikipedia.org/wiki/Montreal_Protocol">Montreal protocol</a> to understand the drivers behind this decline.</p>
 <pre class="r"><code>cfc11 &lt;- climate1 %&gt;%
   arrange(year_month) %&gt;%
   ggplot() + 
@@ -564,7 +566,8 @@ The plot reveals that for last few decades we have a permanent shift towards hig
   labs(title = &quot;CFC-11&quot;,
        caption = &quot;Source: ESRL/NOAA Global Monitoring Division&quot;) +
   xlab(&quot;Year&quot;) +
-  ylab(&quot;CFC-11 (ppbv)&quot;)
+  ylab(&quot;CFC-11 (ppbv)&quot;) +
+  theme_classic()
 
 cfc12 &lt;- climate1 %&gt;%
   arrange(year_month) %&gt;%
@@ -573,14 +576,15 @@ cfc12 &lt;- climate1 %&gt;%
   labs(title = &quot;CFC-12&quot;,
        caption = &quot;Source: ESRL/NOAA Global Monitoring Division&quot;) + 
   xlab(&quot;Year&quot;) +
-  ylab(&quot;CFC-12 (ppbv)&quot;)
+  ylab(&quot;CFC-12 (ppbv)&quot;) + 
+  theme_classic()
 
 gridExtra::grid.arrange(cfc11, cfc12, nrow=1)</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/CFC-11%20and%20CFC-12%20plot-1.png" width="672" /></p>
 </div>
 <div id="tsi" class="section level4">
 <h4>6) TSI</h4>
-<p>TSI pattern exhibits a 10 year cycle, at least that’s what it looks like. I was interested to know more so I googled “total solar irradiance cyclic?” and it took me to <a href="https://en.wikipedia.org/wiki/Solar_cycle">Solar Cycle</a> wiki page which explains that “The solar cycle or solar magnetic activity cycle is the nearly periodic 11-year change in the Sun’s activity (including changes in the levels of solar radiation and ejection of solar material) and appearance (changes in the number and size of sunspots, flares, and other manifestations).”</p>
+<p>TSI pattern exhibits a 10 year cycle or at least that’s what it looks like from the plot. I was interested to know more about it so I googled “total solar irradiance cyclic?” and it took me to <a href="https://en.wikipedia.org/wiki/Solar_cycle">Solar Cycle</a> wiki page which explains that “The solar cycle or solar magnetic activity cycle is the nearly periodic 11-year change in the Sun’s activity (including changes in the levels of solar radiation and ejection of solar material) and appearance (changes in the number and size of sunspots, flares, and other manifestations).”</p>
 <pre class="r"><code>climate1 %&gt;%
   arrange(year_month) %&gt;%
   ggplot(aes(year_month, TSI)) + 
@@ -588,12 +592,13 @@ gridExtra::grid.arrange(cfc11, cfc12, nrow=1)</code></pre>
   labs(title = &quot;Total Solar Irradiance (TSI)&quot;,
        caption = &quot;Source: SOLARIS-HEPPA project&quot;) + 
   xlab(&quot;Year&quot;) +
-  ylab(&quot;TSI (W/m^2)&quot;)</code></pre>
+  ylab(&quot;TSI (W/m^2)&quot;) +
+  theme_classic()</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/TSI%20plot-1.png" width="672" /></p>
 </div>
 <div id="aerosols" class="section level4">
 <h4>7) Aerosols</h4>
-<p>Well at first glance it looks like something is off. The peak around 1992 looks like an anomaly or some data issue. However, if you go to <a href="https://data.giss.nasa.gov/modelforce/strataer/">Godard Institure for Space Studies at NASA</a> website, you’ll notice that there is no problem with this data. It is accurate and also a little bit of research will tell you that in <a href="https://en.wikipedia.org/wiki/Mount_Pinatubo">1991 Mount Pinatubo</a> erupted causing Aerosols to form a global layer of sulfuric acid haze and global temperatures dropped by 0.5 °Centigrade.</p>
+<p>Well at first glance it looks like something is off. The peak around 1992 looks like an anomaly or some data issue. However, if you go to <a href="https://data.giss.nasa.gov/modelforce/strataer/">Godard Institure for Space Studies at NASA</a> website, you’ll notice that there is no problem with this data. It is accurate and a bit of research will tell you that in <a href="https://en.wikipedia.org/wiki/Mount_Pinatubo">1991 Mount Pinatubo</a> erupted causing Aerosols to form a global layer of sulfuric acid haze which caused global temperatures to drop by 0.5°C.</p>
 <pre class="r"><code>climate1 %&gt;%
   arrange(year_month) %&gt;%
   ggplot() + 
@@ -607,7 +612,7 @@ gridExtra::grid.arrange(cfc11, cfc12, nrow=1)</code></pre>
 </div>
 <div id="setting-up-training-and-testing-data" class="section level2">
 <h2>Setting up Training and Testing data</h2>
-<p>For Machine Learning techniques, its pretty common to divvy up data between training and testing set. Training set is primarily used to understand the relationship between a) response and predictor variables and b) relationship among predictors. We then use the generated hypothesis on testing dataset to check the strength of model.</p>
+<p>In Machine Learning its pretty common to divvy up data between training and testing set. Training set is primarily used to understand the relationship between a) response and predictor variables and b) relationship among predictors. We then use the generated hypothesis on testing dataset to check the strength of model.</p>
 <p>There are many ways to split up data. One way could be to just randomly split data in whatever ratio makes sense either 60/40 or 80/20. This approach makes sense if there isn’t a particular pattern in the response variable. However, say if you have a qualitative response variable such as “Yes” or “No”, “Democrat” or “Republican” etc., in that case you want to make sure that the testing and training dataset retain the same proportion of “response” as in original dataset. There are multiple approaches to do that and we will discuss some of those in upcoming posts.</p>
 <p>For climate dataset, we’ll put data for all years including and before year 2006 in training set and the rest in testing set.</p>
 <pre class="r"><code>climate_train &lt;- climate %&gt;%
@@ -649,16 +654,14 @@ ggplot(climate_train_baseline, aes(CO2, error)) +
        x = &quot;CO2&quot;,
        y = &quot;Error&quot;)</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/error%20plot%20for%20baseline%20model-1.png" width="672" /></p>
-<p>We can see that we have, both, the positive and negative type of errors and they are distributed uniformly on both sides of zero. Above is a great visual plot but to compare the accuracy and strength of models we use few other statistics such as ‘Sum of Squared Errors’, ‘Root Mean Squared Errors’, ‘R-square’ etc.</p>
+<p>We can see that we have, both, the positive and negative type of errors and they are distributed uniformly on both sides of zero. Above is a great plot to analyze errors visually but to compare the accuracy and strength of models we use few other statistics such as ‘Sum of Squared Errors’, ‘Root Mean Squared Errors’, ‘R-square’ etc.</p>
 <p>The ‘Sum of Squared Errors’ (SSE) for baseline model is calculated as:</p>
 <p><span class="math display">\[SSE = \sum_{i=1}^N(X_i - \bar{X})^{2}  \]</span></p>
 <pre class="r"><code>(SSE_baseline &lt;- sum(climate_train_baseline$error^2))</code></pre>
 <pre><code>## [1] 9.285256</code></pre>
-<blockquote>
 <p>Note that SSE of Baseline model is also known as SST i.e Sum of Squared Total Errors.</p>
-</blockquote>
 <p>SSE is a good indicator of model accuracy but it’s dependent on number of observations (N). So if we double the observation the model SSE will double as well which is NOT good for assessing accuracy of model, hence we use ‘Root Mean Squared Error’ (RMSE) which is basically square root of SSE divided by N.</p>
-<p><span class="math display">\[RMSE =  \sqrt[2] {\frac{SSE}{N} \]</span></p>
+<p><span class="math display">\[RMSE = \sqrt[]{\frac{SSE}{N}}\]</span></p>
 <pre class="r"><code>(RMSE_baseline &lt;- sqrt(SSE_baseline/nrow(climate_train_baseline)))</code></pre>
 <pre><code>## [1] 0.1808164</code></pre>
 <p>Now we understand our baseline model so we’re ready to build our <strong>Simple Linear model</strong>.</p>
@@ -700,7 +703,7 @@ ggplot(climate_train_baseline, aes(CO2, error)) +
 </div>
 <div id="interpret-model" class="section level3">
 <h3>Interpret model</h3>
-<p>We’re working with a single variable model and we can already see its much better than baseline model. Now lets interpret this model futher and see insights R can provide us about this model starting with plotting the model versus actual data points for a Temperature-Carbon-dioxide plot.</p>
+<p>We’re working with a single variable model and we can already see its much better than baseline model. Now lets plot the estimate versus actual data points for a Temperature-Carbon-dioxide plot.</p>
 <pre class="r"><code>aug_model1 &lt;- augment(model1, climate_train)
 
 ggplot(aug_model1, aes(CO2, Temp)) +
@@ -708,9 +711,10 @@ ggplot(aug_model1, aes(CO2, Temp)) +
   geom_smooth(method = &quot;lm&quot;, color = &quot;blue&quot;, se = FALSE) +
   geom_segment(aes(x = CO2, xend = CO2,
                    y = Temp, yend = aug_model1$.fitted), alpha = 0.5) + 
-  ggtitle(&quot;Regression Error&quot;)</code></pre>
+  ggtitle(&quot;Regression Error&quot;) +
+  theme_classic()</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<p>The <code>summary()</code> function provides a nice summary of relevant stats but accessing Estimates and R square values is not easy because <code>summary()</code> is not in a data frame or tibble format. Luckily, we can just do that using <code>tidy()</code> function from <code>broom</code> package. It’s a very handy tool for writing reports or futher analysis.</p>
+<p>The <code>summary()</code> function is great to see relevant stats of a model but accessing the results from <code>summary()</code> is difficult as it’s not in a data frame or tibble format. Luckily, we can just do that using <code>tidy()</code> function from <code>broom</code> package. It’s a very handy tool for writing reports or futher analysis.</p>
 <pre class="r"><code>tidy(model1)</code></pre>
 <pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic  p.value
@@ -726,14 +730,14 @@ ggplot(aug_model1, aes(CO2, Temp)) +
 <li><span class="math inline">\(R^2\)</span></li>
 <li>F-statistics</li>
 </ol>
-<p>We can see that the <span class="math inline">\(R^2\)</span> is 0.6218 and adjusted <span class="math inline">\(R^2\)</span> is 0.6204 but we don’t know if its better or not since we haven’t build any other model. But we know its an improvement of ~62% over baseline model. We can look up all three values using <code>glance()</code> function from <code>broom()</code> package.</p>
+<p>We can see that the <span class="math inline">\(R^2\)</span> is 0.6217783 and adjusted <span class="math inline">\(R^2\)</span> is 0.6204371 but we don’t know if its better or not since we haven’t build any other model. But we know its an improvement of ~62% over baseline model. We can look up all three values using <code>glance()</code> function from <code>broom()</code> package.</p>
 <pre class="r"><code>glance(model1)</code></pre>
 <pre><code>## # A tibble: 1 x 11
 ##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0.622         0.620 0.112      464. 1.74e-61     2   221. -436. -425.
 ## # … with 2 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;</code></pre>
-<p>As we can see R-squared value is 0.62 (1 is perfect prediction), Residual Standard Error (RSE) is 0.11 (minimize as much as possible), and F-statistics is 463.59 (larger the better).</p>
+<p>As we can see R-squared value is 0.622 (1 is perfect prediction), Residual Standard Error (RSE) is 0.112 (minimize as much as possible), and F-statistics is 463.594 (larger the better).</p>
 </div>
 <div id="making-prediction" class="section level3">
 <h3>Making Prediction</h3>
@@ -765,13 +769,13 @@ climate_test %&gt;%
 ##      MSE
 ##    &lt;dbl&gt;
 ## 1 0.0438</code></pre>
-<p>We’re going to assess <em>model1</em> in next section.</p>
+<p>We’re going to compare <em>model1</em> against other models in next section.</p>
 </div>
 </div>
 <div id="multiple-linear-regression" class="section level2">
 <h2>Multiple Linear Regression</h2>
 <p>A Multiple Linear Regression is in the form of:
-<span class="math display">\[Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + ….. + \beta_kX_k + \epsilon\]</span></p>
+<span class="math display">\[Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + ….. + \beta_kX_k + \epsilon \]</span></p>
 <div id="model-building-1" class="section level3">
 <h3>Model Building</h3>
 <p>We can build a model where Temperature depends on all other variables except Year and Month.</p>
@@ -803,7 +807,8 @@ climate_test %&gt;%
 ## Residual standard error: 0.09171 on 275 degrees of freedom
 ## Multiple R-squared:  0.7509, Adjusted R-squared:  0.7436 
 ## F-statistic: 103.6 on 8 and 275 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>This is not a bad model. Our <span class="math inline">\(R^2\)</span> increased from 0.6218 to 0.7509 and there are few significant predictors. It appears to be a better model than the simple linear model, however, there is a problem associated with this model, <em>Collinearity</em>. Collinearity or Multicollinearity exists when there are two or more highly correlated variables in the predictor set. Because of this high collinearity among variables, it’s difficult to explain the variation in the dataset and which variable caused it. In short, we need to deal with this issue and the easiest way is to drop one or few highly collinear variables. To calculate collinearity we can use inbuilt <code>cor()</code> function.</p>
+<p>This is not a bad model. Our <span class="math inline">\(R^2\)</span> increased from 0.622 to 0.751 and there are few significant predictors. It appears to be a better model than the simple linear model, however, there is a problem associated with this model, <em>Collinearity</em>.</p>
+<p>Collinearity or Multicollinearity exists when there are two or more highly correlated variables in the predictor set. Because of this high collinearity among variables, it’s difficult to explain the variation in the dataset and which variable caused it. In short, we need to deal with this issue and the easiest way is to drop one or few highly collinear variables. To calculate collinearity we can use inbuilt <code>cor()</code> function.</p>
 <pre class="r"><code>round(cor(climate_train), digits = 2)</code></pre>
 <pre><code>##               Year Month   MEI   CO2   CH4   N2O CFC-11 CFC-12   TSI Aerosols
 ## Year          1.00 -0.03 -0.04  0.98  0.92  0.99   0.57   0.90  0.17    -0.35
@@ -897,8 +902,8 @@ summary(model3)</code></pre>
 ## - Aerosols  1   0.43987 2.7534 -1302.7
 ## - MEI       1   0.83118 3.1447 -1264.9</code></pre>
 </div>
-<div id="assessing-model-numerically" class="section level3">
-<h3>Assessing Model Numerically</h3>
+<div id="assessing-models-numerically" class="section level3">
+<h3>Assessing Models Numerically</h3>
 <p>We can numerically compare quality of all four models.</p>
 <pre class="r"><code>list(model1 = broom::glance(model1), 
      model2 = broom::glance(model2),
@@ -934,12 +939,11 @@ summary(model3)</code></pre>
 <p>It is interesting to note that the step function does not address the collinearity of the variables, except that adding highly correlated variables will not improve the <span class="math inline">\(R^2\)</span> significantly. The consequence of this is that the step function will not necessarily produce a very interpretable model - just a model that has balanced quality and simplicity for a particular weighting of quality and simplicity (AIC). Looking at the data above its clear that <em>model2</em>, <em>model3</em> and <em>model4</em> are roughly same in terms of quality.</p>
 <p>Personally I’d use <em>model3</em> for its interpretability and also because it addresses collinearity issue head on.</p>
 </div>
-<div id="assessing-model-visually" class="section level3">
-<h3>Assessing Model visually</h3>
-<p>So far we compared the models numerically which is great but we should also assess model strength visually. We will choose model3 for this analysis. In each model a visual study of residuals can provide valuable insights.</p>
-<ol style="list-style-type: decimal">
-<li>“Normality” of residuals</li>
-</ol>
+<div id="assessing-models-visually" class="section level3">
+<h3>Assessing Models Visually</h3>
+<p>So far we compared the models numerically which is great but we should also assess model strength visually. We will choose <em>model3</em> for this analysis. In each model a visual study of residuals can provide valuable insights.</p>
+<div id="normality-of-residuals" class="section level4">
+<h4>1. “Normality” of residuals</h4>
 <pre class="r"><code>aug_model3 &lt;- augment(model3, climate_train)
 
 ggplot(aug_model3, aes(.resid)) +
@@ -950,9 +954,9 @@ ggplot(aug_model3, aes(.resid)) +
   xlab(&quot;Residuals from model3&quot;)</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/Residual%20Normal%20plot-1.png" width="672" /></p>
 <p>The plot clearly shows that the “residuals” of the model follow normal distribution which is as per our expectation.</p>
-<ol start="2" style="list-style-type: decimal">
-<li>Residual vs. Fitted values</li>
-</ol>
+</div>
+<div id="residual-vs.fitted-values" class="section level4">
+<h4>2. Residual vs. Fitted values</h4>
 <pre class="r"><code>ggplot(aug_model3, aes(.fitted, .resid)) +
   geom_ref_line(h = 0) +
   geom_point(aes(color = as.factor(Year)), alpha = 0.6) + 
@@ -962,10 +966,10 @@ ggplot(aug_model3, aes(.resid)) +
   ylab(&quot;Residuals (Actual - Predicted values)&quot;) +
   labs(color = &quot;Year&quot;)</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/Residual%20vs%20Fitted-1.png" width="672" /></p>
-<p>In this plot we expect a sort of horizontal line at .resid = 0 and equal and homogeneous distribution of points on either side of line. Above model satisfies both requirement. If there was a non-linear relationship between predictor variables and the response variable, it’d shows up in this plot.</p>
-<ol start="3" style="list-style-type: decimal">
-<li>Standardized Residuals vs. Fitted values</li>
-</ol>
+<p>In this plot we expect a sort of horizontal line at <strong>.resid = 0</strong> and equal and homogeneous distribution of points on either side of line. Above model satisfies both requirement. If there was a non-linear relationship between predictor variables and the response variable then it’d shows up in this plot.</p>
+</div>
+<div id="standardized-residuals-vs.fitted-values" class="section level4">
+<h4>3. Standardized Residuals vs. Fitted values</h4>
 <pre class="r"><code>ggplot(aug_model3, aes(.fitted, .std.resid)) +
   geom_ref_line(h = 0) +
   geom_point(aes(color = as.factor(Year)), alpha = 0.6) +
@@ -976,10 +980,10 @@ ggplot(aug_model3, aes(.resid)) +
   labs(color = &quot;Year&quot;)</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/std%20residuals%20vs%20fitted-1.png" width="672" />
 Interpretation of above plot is similar to Residual vs. Fitted values</p>
-<ol start="4" style="list-style-type: decimal">
-<li>Scale-Location Plot</li>
-</ol>
-<p>Scale-Location plot explains if the residuals are spread evenly along the range of predictors. This plot is used to check the assumption of equal variance (homoscedasticity). We have equally scattered points on both side of line and line is roughly horizontal and both of these two are good indicator of a robust and accurate model.</p>
+</div>
+<div id="scale-location-plot" class="section level4">
+<h4>4. Scale-Location Plot</h4>
+<p>Scale-Location plot explains if the residuals are spread evenly along the range of predictors. This plot is used to check the assumption of equal variance (homoscedasticity). We have scattered points equally on both side of line and the line is roughly horizontal and both of these two are good indicator of a robust and accurate model.</p>
 <pre class="r"><code>ggplot(aug_model3, aes(.fitted, sqrt(abs(.std.resid)))) +
   geom_ref_line(h = 0) +
   geom_point(aes(color = as.factor(Year)), alpha = 0.6) +
@@ -989,9 +993,9 @@ Interpretation of above plot is similar to Residual vs. Fitted values</p>
   ylab(&quot;sqrt(Standardized Residuals)&quot;) +
   labs(color = &quot;Year&quot;)</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/scale-location%20plot-1.png" width="672" /></p>
-<ol start="5" style="list-style-type: decimal">
-<li>Q-Q plot</li>
-</ol>
+</div>
+<div id="q-q-plot" class="section level4">
+<h4>5. Q-Q plot</h4>
 <p>We plotted residuals to check for their normality in first plot of this section. We can also use Q-Q plot. If data points fall on an imaginary straight line that indicates normal distribution while any skewness is not a good sign. The plot clearly shows a normal distribution, there are some data points towards the head and tail observations which deviate from the normal line but that’s not too bad. In real world data, this is expected.</p>
 <pre class="r"><code>ggplot(aug_model3, aes(sample = .resid)) +
   stat_qq(alpha = 0.3) +
@@ -1000,15 +1004,18 @@ Interpretation of above plot is similar to Residual vs. Fitted values</p>
   xlab(&quot;Theoretical Quantiles&quot;) + 
   ylab(&quot;Sample Quantiles&quot;)</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/Q-Q%20plot-1.png" width="672" /></p>
-<ol start="6" style="list-style-type: decimal">
-<li>Cook’s distance and Residuals vs. Leverage</li>
-</ol>
+</div>
+<div id="cooks-distance-and-residuals-vs.leverage" class="section level4">
+<h4>6. Cook’s distance and Residuals vs. Leverage</h4>
 <p>In Regression we always look for <em>outliers</em> with our belief being that outliers cause distortion to our model and must be avoided at all costs. However, that’s nor true at all, infact outliers can explain something deep about the environment or structure of dataset and should be studied very carefully. Also outliers don’t necessarily influence regression model as much as we think. Sometimes you’d notice that it doesn’t matter if you include or exclude the outlier from the dataset, their impact is marginal. However there is another set of observations which may impact the quality of model even if you change the observation little bit. Obviously we’re very interested in studying these observations and their impact. That’s where this plot comes in picture. I’m using base R for these two plots.</p>
 <p>From Residual vs. Leverage plot we can’t even see the Cook’s distance line as all observations are well within Cook’s distance lines. It indicates absence of any influential observation.</p>
-<pre class="r"><code>plot(model3, which = 4, id.n = 5) # id.n identifies &quot;n&quot; top outlier observations</code></pre>
+<pre class="r"><code>plot(model3, which = 4, id.n = 5) </code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/Cooks%20distance%20and%20Residuals%20vs%20Leverage-1.png" width="672" /></p>
-<pre class="r"><code>plot(model3, which = 5, id.n = 5)</code></pre>
+<pre class="r"><code># id.n identifies &quot;n&quot; top outlier observations
+
+plot(model3, which = 5, id.n = 5)</code></pre>
 <p><img src="/post/2020-02-13-linear-regression_files/figure-html/Cooks%20distance%20and%20Residuals%20vs%20Leverage-2.png" width="672" /></p>
+</div>
 </div>
 <div id="making-prediction-1" class="section level3">
 <h3>Making Prediction</h3>
@@ -1052,7 +1059,7 @@ Interpretation of above plot is similar to Residual vs. Fitted values</p>
 <li>How to interpret a model both, numerically and visually</li>
 <li>How to make predictions using the models</li>
 </ol>
-<p>Hope you enjoyed the post! Questions and Feedback are welcome.</p>
+<p>Please know the purpose of the post was as stated above and not to make any comment on current politics around climate change. I leave it up to the climate science experts, free economy market and political leadership to figure that out.</p>
 </div>
 </div>
 

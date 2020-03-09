@@ -6,18 +6,18 @@
     <description>Recent content on R, Statistics and Visualization</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 09 Mar 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Linear Regression</title>
-      <link>/2020/02/13/linear-regression/</link>
-      <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
+      <link>/2020/03/09/linear-regression/</link>
+      <pubDate>Mon, 09 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/02/13/linear-regression/</guid>
-      <description>Introduction Linear Regression is one of the most simple, intuitive, and easy to learn modeling technique which has been heavily used in predicting a quantitative response and it falls under classification of Supervised Learning. A simple search of “Linear Regression” on Google scholar returns 4+ Million result and there is so much information available online for free explaining Linear Regression in detail. Today there are many sophisticated techniques available for prediction and prescription analytic but a solid foundation in Linear Regression is must to understand nuances of modeling before you can jump and start applying more advanced techniques.</description>
+      <guid>/2020/03/09/linear-regression/</guid>
+      <description>Introduction Linear Regression is one of the most simple, intuitive, and widely used modeling technique which primarily predicts a quantitative response and thus falls under classification of Supervised Learning. A search on Google Scholar for the term “Linear Regression” returns 4+ million result and there are many good quality courses available online explaining Linear Regression for free. Today there are many sophisticated techniques available for predictive and prescriptive analytics but a solid foundation in Linear Regression is must to understand nuances of modeling before dealing with more advanced techniques.</description>
     </item>
     
     <item>
@@ -26,7 +26,8 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>Coming from Mechanical Engineering background, I always found it difficult to dabble with programming. However, lately I realized that I do enjoy statistics | data-science for which I have to use computers. So my plan is to hash out descent quality posts focusing on data-science primarily using R for anyone who is new to programming.</description>
+      <description>Hello World! My name is Vinay Singh and welcome to my website. I come from a Mechanical and Industrial Engineering background but lately found myself &amp;ldquo;playing&amp;rdquo; with lot of manufacturing data which got me hooked into Statistics using R. My plan is to keep my thoughts and code in one place using blogs, so primarily I&amp;rsquo;m writing this for my own benefit.
+I dig Metallica and I ❤️ pipes.</description>
     </item>
     
   </channel>
