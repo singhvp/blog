@@ -1,2 +1,2 @@
-# asbates
-Personal website of Andrew Bates
+# blog
+contains blog information
