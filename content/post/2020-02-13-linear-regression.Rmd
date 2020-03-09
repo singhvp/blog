@@ -1,0 +1,638 @@
+---
+title: Linear Regression
+author: Vinay Singh
+date: '2020-02-13'
+slug: linear-regression
+categories:
+  - R
+  - Regression
+tags:
+  - regression
+  - plot
+  - R Markdown
+---
+
+
+  
+# Introduction
+  
+Linear Regression is one of the most simple, intuitive, and easy to learn modeling technique which has been heavily used in predicting a quantitative response and it falls under classification of Supervised Learning. A simple search of "Linear Regression" on Google scholar returns 4+ Million result and there is so much information available online for free explaining Linear Regression in detail. Today there are many sophisticated techniques available for prediction and prescription analytic but a solid foundation in Linear Regression is must to understand nuances of modeling before you can jump and start applying more advanced techniques. In it's simplest form, linear model is expressed as:
+
+  $$y = \beta_0 + \beta_1x_1 + \beta_2x_2 + ….. + \beta_kx_k + \epsilon$$
+
+where:
+
+- $y$ is quantitative response variable i.e basically what we have to predict
+- $\beta_0$ is the intercept or slope and it's not multiplied with any feature or predictor variable
+- $x_1, x_2, ..., x_k$ are predictor variables
+- $\beta_1$, $\beta2$ ... $\beta_k$ are coefficients of their respective predictor variables
+- the $\epsilon$ is the error term. It's the difference between actual and predicted outcomes. In Linear Regression we assume that we'll make many positive and negative errors which are small but only few large errors. We will see this in detail when we start analyzing residuals later in the post.
+
+# Climate Change
+## Preparing Data
+
+We will use "climate_change" data provided in course [The Analytical Edge](https://www.edx.org/course/the-analytics-edge-0) offered by MIT through [edX](https://www.edx.org) for this exercise. 
+
+There have been many studies documenting that the average global temperature has been increasing over the last century. The consequences of a continued rise in global temperature will be dire. Rising sea levels and an increased frequency of extreme weather events will affect billions of people.
+
+In this problem, we will attempt to study the relationship between average global temperature and several other factors.
+
+The file [climate_change.csv](https://vinaysingh.rbind.io/post/climate_change.csv) contains climate data from May 1983 to December 2008. The available variables include:
+  
+  - Temp: the difference in degrees Celsius between the average global temperature in that period and a reference value. This data comes from the [Climatic Research Unit at the University of East Anglia](http://www.cru.uea.ac.uk/cru/data/temperature/).
+- CO2, N2O, CH4, CFC.11, CFC.12: atmospheric concentrations of carbon dioxide (CO2), nitrous oxide (N2O), methane  (CH4), trichlorofluoromethane (CCl3F; commonly referred to as CFC-11) and dichlorodifluoromethane (CCl2F2; commonly referred to as CFC-12), respectively. This data comes from the [ESRL/NOAA Global Monitoring Division](http://www.esrl.noaa.gov/gmd/ccgg/data-products.html).
+- CO2, N2O and CH4 are expressed in ppmv (parts per million by volume  -- i.e., 397 ppmv of CO2 means that CO2 constitutes 397 millionths of the total volume of the atmosphere)
+- CFC.11 and CFC.12 are expressed in ppbv (parts per billion by volume). 
+- Aerosols: the mean stratospheric aerosol optical depth at 550 nm. This variable is linked to volcanoes, as volcanic eruptions result in new particles being added to the atmosphere, which affect how much of the sun's energy is reflected back into space. This data is from the [Godard Institute for Space Studies at NASA](http://data.giss.nasa.gov/modelforce/strataer/).
+- TSI: the total solar irradiance (TSI) in W/m2 (the rate at which the sun's energy is deposited per unit area). Due to sunspots and other solar phenomena, the amount of energy that is given off by the sun varies substantially with time. This data is from the [SOLARIS-HEPPA project website](http://solarisheppa.geomar.de/solarisheppa/cmip5).
+- MEI: multivariate El Nino Southern Oscillation index (MEI), a measure of the strength of the [El Nino/La Nina-Southern Oscillation](http://en.wikipedia.org/wiki/El_nino) (a weather effect in the Pacific Ocean that affects global temperatures). This data comes from the [ESRL/NOAA Physical Sciences Division](http://www.esrl.noaa.gov/psd/enso/mei/table.html).
+
+We start with loading all required packages we need for data analysis.
+
+```{r loading packages, message=FALSE, warning=FALSE, paged.print=FALSE}
+# packages
+library(tidyverse)  
+library(psych)
+library(broom)
+library(modelr)
+library(ggridges)
+library(ggrepel)
+library(lubridate)
+library(reshape)
+library(kableExtra)
+```
+
+Reading data into R is super easy. The ```read_csv``` function allows to read a .csv file into R and takes care of headers and data types automatically. If you need to pass some parameters you can always do that, however most the times it's not required. You can learn more about ```read_csv``` or any other function by typing ```?read_csv``` in your R console. It's worthy to note that ```read_csv``` return a "tibble" whereas ```read.csv``` function returns a data-frame.
+
+```{r reading data into R, message=FALSE, warning=FALSE, paged.print=FALSE}
+# reading data into R
+climate <- read_csv("climate_change.csv")
+
+# printing header of climate data
+knitr::kable(head(climate)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+Knwoing this is a big dataset, it'd be very beneficial is somehow we can understand the structure of this dataset. R provides a function ```str()``` just for this purpose.
+```{r structure of dataset}
+# structure of dataset
+str(climate)
+```
+We can see that all variables are of "numerical" type and we have 11 of them with 308 observations. 
+
+Next, we will use ```summary()``` function to get a quick and dirty numerical summary of dataset.
+```{r summary of dataset}
+# summary of dataset
+summary(climate)
+```
+In a single line code we can see statistical summary of all variables in dataset. This step is very helpful in identifying outliers or any anomaly in data.  
+
+
+## Exploratory Data Analysis (EDA)
+
+Before we start with model building, it makes whole lot of sense to get ourselves familiarized with the data. This initial step is known as "Exploratory Data Analysis" or EDA for short. There are no hard and fast rules for this phase. I guess it depends on your intuition and asking meaningful questions as you learn more about the data itself. Lets beging by analyzing each variable one by one. 
+
+
+#### 1) Temperature 
+
+Temperature is the response variable in this exercise.
+
+```{r temperature by year-month, message=FALSE, warning=FALSE, paged.print=FALSE}
+# adding Year-Month variable as date
+climate1 <- climate %>%
+  mutate(year_month = ymd(paste(climate$Year, climate$Month, truncated = 1))) 
+
+ggplot(climate1, aes(year_month, Temp)) + 
+  geom_line() + 
+  geom_smooth(se=FALSE, linetype = "dotted") + 
+  labs(title = "Temperature (1983-2010)",
+       x = "Year", 
+       y = "Temperature") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+We can see from the plot that there has been a steady rise in temperature over the years but since 2005 the curve has plateaued off. If its a permanent shift in the trend or seasonality, we don't know and discussing it is beyond the scope of this post. However, lets see if there's any seasonality to temperature across the year.
+
+```{r Temperature by Month for each Year, message=FALSE, warning=FALSE, paged.print=FALSE}
+# adding right and left hand sided labels
+climate1 <- climate1 %>%
+  mutate(label_rt = if_else(Month == 12 & Year%%2 == 0, 
+                            as.character(Year), NA_character_)) %>%
+  mutate(label_lt = if_else(Month == 1 & Year%%2 != 0, 
+                            as.character(Year), NA_character_))
+
+# creating label zones for left and right sided
+x_lt <- c(NA,1)
+x_rt <- c(12,NA)
+
+# Temperature Month-wise plot for each year in data
+ggplot(climate1, aes(as.factor(Month), Temp)) + 
+  geom_point(aes(color = as.factor(Year))) + 
+  geom_line(aes(group = as.factor(Year), 
+                color = as.factor(Year)), 
+            alpha = 0.7) + 
+  labs(title = 'Temperature by month') +
+  xlab("Months") +
+  ylab("Temperature") + 
+  geom_text_repel(aes(label = label_rt, color = as.factor(Year)), 
+                  nudge_x = 1, xlim = x_rt) +
+  geom_text_repel(aes(label = label_lt, color = as.factor(Year)), 
+                  nudge_x = 1, xlim = x_lt) +
+  scale_x_discrete(expand=c(0.1,0),
+                   breaks=c("1", "2", "3", "4", "5", "6", 
+                            "7", "8", "9", "10", "11", "12"),
+                   labels=c("1", "2", "3", "4", "5", "6", 
+                            "7", "8", "9", "10", "11", "12"),
+                   limits=c("-1","1", "2", "3", "4", "5", "6", 
+                            "7", "8", "9", "10", "11", "12", "13"), drop=FALSE) +
+  theme(legend.position = "none")
+```
+
+We can see that generally the temperature has been steadily rising across years (same as last plot) but I find this plot is little bit cluttered, so lets try another approach and plot a 'Temperature-density' distribution.
+
+```{r Temperature density by year, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(climate1, aes(x = Temp, y = as.factor(Year))) + 
+  geom_density_ridges_gradient(aes(fill = ..x..), 
+                               scale = 3, size = 0.3, alpha = 0.5) +
+  scale_fill_gradientn(colours = c("#87CEFA", "#FFFFE0", "#FF0000"),
+                       name = "Temp") +
+  labs(title = 'Temperature density',
+       subtitle = "Temperature is difference in degrees Celsius between the \n average global temperature in that period and a reference value") + 
+  theme(legend.position = c(0.9,0.2)) +
+  xlab("Temperature") + 
+  ylab("Year") + 
+  theme_classic()
+```
+The plot reveals that for last few decades we have a permanent shift towards higher temperature. Although there is a dip from 2005 through 2008 as we did see in other plots, we notice that that extreme temperatures (>0.5° C) occurred in all years since 2000. 
+
+
+#### 2) MEI
+
+MEI i.e. "Multivariate El Nino Southern Oscillation index by Year" is a prime predictor for global climate disruptions. MEI is a time series type of data and its a combination of multiple variables which contains both atmospheric and oceanic variables. Real time monitoring of MEI enables goverments to tackle regional issue affected by climate and plan for food and water supply, health and safety etc. 
+```{r MEI plot, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate1 %>%
+  arrange(year_month) %>%
+  ggplot() + 
+  geom_line(aes(year_month, MEI, color = MEI), size = 1) +
+  scale_color_gradient2(low = 'blue', high = 'red') + 
+  labs(title = "Multivariate El Nino Southern Oscillation index by Year", 
+       caption = "Source: ESRL/NOAA Physical Sciences Division") + 
+  xlab("Year") +
+  ylab("MEI") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_minimal()
+```
+
+There is definitely a seasonality to this MEI but not a continuous positive or negative trend over the years. 
+
+#### 3) Carbon dioxide
+
+Carbon dioxide is a Greenhouse house which basically traps the solar enegery and helps warm up the planet. Since Industrial revolution humans have significantly contributed to natrually occurring $CO_2$ levels which might have significant impact on increasing Global temperature. The $CO_2$ levels have been constantly increasing in atmosphere since this data is collected. It'd be interesting to note how does temperature correlate with $CO_2$ levels.
+
+```{r Carbon Dioxide plot, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate1 %>%
+  arrange(year_month) %>%
+  ggplot(aes(year_month, CO2)) + 
+  geom_line() +
+  geom_smooth(se = FALSE, linetype = "dotted", color = "red") +
+  labs(title = "Carbon-dioxide by Year", 
+       caption = "Source: ESRL/NOAA Global Monitoring Division") + 
+  xlab("Year") +
+  ylab("CO2 (ppmv)") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+#### 4) Methane
+
+Methane, also a Greenhouse gas, traps more energy than Carbon dioxide. We can see that its levels are constantly rising too however we notice that the curve has somewhat flattened around 2000.
+
+```{r Methane plot, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate1 %>%
+  arrange(year_month) %>%
+  ggplot(aes(year_month, CH4)) + 
+  geom_line() +
+  geom_smooth(se=FALSE, linetype = "dotted", color = "red") +
+  labs(title = "Methane by Year", 
+       caption = "Source: ESRL/NOAA Global Monitoring Division") + 
+  xlab("Year") +
+  ylab("CH4 (ppmv)") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+#### 5) Nitrous Oxide
+
+Nitrous Oxide, another Green House gas, has lot more Global Warming Potential (GWP) than $CO_2$ or $N_2O$. As we can see all 3 biggest man-made contributor to Greenhouse gases are on constant rise.
+
+```{r Nitrous Oxide, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate1 %>%
+  arrange(year_month) %>%
+  ggplot() + 
+  geom_line(aes(year_month, N2O)) +
+  labs(title = "Nitrous Oxide by Year", 
+       caption = "Source: ESRL/NOAA Global Monitoring Division") + 
+  xlab("Year") +
+  ylab("N2O (ppmv)") + 
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+#### 6) CFC-11 and CFC-12
+
+We can see that after rising steadily since 1995-2000 there is a decline in levels of CFC-11 and CFC-12. Read more about [Kyoto protocol](https://en.wikipedia.org/wiki/Kyoto_Protocol) and [Montreal protocol](https://en.wikipedia.org/wiki/Montreal_Protocol) to understand the drivers behind this decline.
+
+```{r CFC-11 and CFC-12 plot, echo=TRUE, message=FALSE, warning=FALSE}
+cfc11 <- climate1 %>%
+  arrange(year_month) %>%
+  ggplot() + 
+  geom_line(aes(year_month, `CFC-11`)) +
+  labs(title = "CFC-11",
+       caption = "Source: ESRL/NOAA Global Monitoring Division") +
+  xlab("Year") +
+  ylab("CFC-11 (ppbv)")
+
+cfc12 <- climate1 %>%
+  arrange(year_month) %>%
+  ggplot() + 
+  geom_line(aes(year_month, `CFC-12`)) +
+  labs(title = "CFC-12",
+       caption = "Source: ESRL/NOAA Global Monitoring Division") + 
+  xlab("Year") +
+  ylab("CFC-12 (ppbv)")
+
+gridExtra::grid.arrange(cfc11, cfc12, nrow=1)
+```
+
+#### 6) TSI
+
+TSI pattern exhibits a 10 year cycle, at least that's what it looks like. I was interested to know more so I googled "total solar irradiance cyclic?" and it took me to [Solar Cycle](https://en.wikipedia.org/wiki/Solar_cycle) wiki page which explains that "The solar cycle or solar magnetic activity cycle is the nearly periodic 11-year change in the Sun's activity (including changes in the levels of solar radiation and ejection of solar material) and appearance (changes in the number and size of sunspots, flares, and other manifestations)."
+
+```{r TSI plot, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate1 %>%
+  arrange(year_month) %>%
+  ggplot(aes(year_month, TSI)) + 
+  geom_line() + 
+  labs(title = "Total Solar Irradiance (TSI)",
+       caption = "Source: SOLARIS-HEPPA project") + 
+  xlab("Year") +
+  ylab("TSI (W/m^2)")
+
+```
+
+#### 7) Aerosols
+
+Well at first glance it looks like something is off. The peak around 1992 looks like an anomaly or some data issue. However, if you go to [Godard Institure for Space Studies at NASA](https://data.giss.nasa.gov/modelforce/strataer/) website, you'll notice that there is no problem with this data. It is accurate and also a little bit of research will tell you that in [1991 Mount Pinatubo](https://en.wikipedia.org/wiki/Mount_Pinatubo) erupted causing Aerosols to form a global layer of sulfuric acid haze and global temperatures dropped by 0.5 °Centigrade.
+
+```{r Aerosols plot, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate1 %>%
+  arrange(year_month) %>%
+  ggplot() + 
+  geom_line(aes(year_month, Aerosols)) + 
+  labs(title = "Mean Stratospheric Aerosol Optical Depth at 550 nm",
+       caption = "Source: Godard Institute for Space Studies at NASA") + 
+  xlab("Year") +
+  ylab("AOD")
+```
+
+
+## Setting up Training and Testing data
+
+For Machine Learning techniques, its pretty common to divvy up data between training and testing set. Training set is primarily used to understand the relationship between a) response and predictor variables and b) relationship among predictors. We then use the generated hypothesis on testing dataset to check the strength of model. 
+
+There are many ways to split up data. One way could be to just randomly split data in whatever ratio makes sense either 60/40 or 80/20. This approach makes sense if there isn't a particular pattern in the response variable. However, say if you have a qualitative response variable such as "Yes" or "No", "Democrat" or "Republican" etc., in that case you want to make sure that the testing and training dataset retain the same proportion of "response" as in original dataset. There are multiple approaches to do that and we will discuss some of those in upcoming posts. 
+
+For climate dataset, we'll put data for all years including and before year 2006 in training set and the rest in testing set.
+
+```{r splitting data in training and testing set, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate_train <- climate %>%
+  filter(Year <= 2006)
+
+climate_test <- climate %>%
+  filter(Year > 2006)
+```
+
+## Simple Linear Regression
+
+Simple Linear Regression looks like this:
+$$Y = \beta_0 + \beta_1X + \epsilon$$
+where 'Y' is the response variable and 'X' is the predictor variable. In essence there is only **one** predictor variable. To build a simple linear regression lets use $CO_2$ as predictor variable. 
+
+### Model Building
+
+Before we build a Simple Linear model, lets understand what a "Baseline model" is and build one. A Baseline model predicts a unique value for a quantitative response variable or the most common value for qualitative/classification response variables. For example, if you're predicting rainfall for next month, a baseline model will use average of all monthly rainfall data as a prediction, however, if you're trying to predict who wins the next soccer world cup, a baseline model will look at team with highest wins and it'll simply predict that team to win. In this particular example, baseline model will always predict the average temperature, which is:
+
+```{r baseline_temperature, message=FALSE, warning=FALSE, paged.print=FALSE}
+mean(climate_train$Temp)
+```
+
+Plotting Baseline model against $CO_2$ will look like:
+```{r baseline_model, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate_train_baseline <- climate_train %>%
+  mutate(baseline_temp = mean(Temp)) 
+
+ggplot(climate_train_baseline, aes(CO2, baseline_temp)) + 
+  geom_point(alpha = 0.2) + 
+  stat_smooth(geom = "line", se = FALSE, color = "red", alpha = 0.8) +
+  labs(title = "Baseline Temperature-CO2 model",
+       x = "CO2",
+       y = "Baseline Temperature") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Basically, as stated above, this model will always predict same value for Temperature regardless of $CO_2$ value. The error of this model, defined as difference between actual and predicted values, can be calculated as following:
+
+```{r error plot for baseline model, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate_train_baseline <- climate_train_baseline %>%
+  mutate(error = Temp - baseline_temp)
+
+ggplot(climate_train_baseline, aes(CO2, error)) + 
+  geom_point(aes(color = ifelse(error > 0, "red", "blue"))) +
+  scale_color_identity() + 
+  labs(title = "Error plot for Baseline model",
+       x = "CO2",
+       y = "Error")
+```
+
+We can see that we have, both, the positive and negative type of errors and they are distributed uniformly on both sides of zero. Above is a great visual plot but to compare the accuracy and strength of models we use few other statistics such as 'Sum of Squared Errors', 'Root Mean Squared Errors', 'R-square' etc. 
+
+The 'Sum of Squared Errors' (SSE) for baseline model is calculated as:
+
+$$SSE = \sum_{i=1}^N(X_i - \bar{X})^{2}  $$
+
+```{r SSE_baseline, message=FALSE, warning=FALSE, paged.print=FALSE}
+(SSE_baseline <- sum(climate_train_baseline$error^2))
+```
+
+> Note that SSE of Baseline model is also known as SST i.e Sum of Squared Total Errors.
+
+SSE is a good indicator of model accuracy but it's dependent on number of observations (N). So if we double the observation the model SSE will double as well which is NOT good for assessing accuracy of model, hence we use 'Root Mean Squared Error' (RMSE) which is basically square root of SSE divided by N.
+
+$$RMSE =  \sqrt[2] {\frac{SSE}{N} $$
+
+```{r RMSE_baseline, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+(RMSE_baseline <- sqrt(SSE_baseline/nrow(climate_train_baseline)))
+```
+
+
+Now we understand our baseline model so we're ready to build our **Simple Linear model**.
+
+$$Temp = \beta_0 + \beta_1*CO_2 + \epsilon   $$
+```{r build simple linear model, message=FALSE, warning=FALSE, paged.print=FALSE}
+model1 <- lm(Temp ~ CO2, data = climate_train)
+```
+
+We can look at summary of model by using ```summary()``` function
+```{r}
+summary(model1)
+```
+
+We observe that coefficient of $CO_2$ is 0.012 which means that for every increase of 10 ppmv of $CO_2$, the temperature difference will increase by 0.12°C. The _p value_ establishes that coefficient is significant. 
+
+Note: $R^2$ ( = 1 - $\frac{SSE}{SST}$) depends on SSE and SST (SST is SSE of baseline). $R^2$ value of model built using training dataset is anywhere between 0 and 1. A value of 0 means no improvement over Baseline and 1 means perfect Predictive model. In other words, $R^2$ tells us how better our model is than Baseline model. The $R^2$ for Simple model is 0.6218 which is significant improvement over Baseline model. 
+
+The `summary()` function also outputs 'Adjusted $R^2$', which adjusts the 'Multiple $R^2$' to account for the number of independent variables used relative to the number of data points. 'Multiple $R^2$' will always increase if you add independent variable whereas 'Adjusted $R^2$' will decrease if you add independent variable which decreases the quality of the model.
+
+Lets calculate SSE and RMSE for Simple Linear model:
+```{r SSE simple model, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate_train <- climate_train %>%
+  add_predictions(model1) %>%
+  mutate(error_simple = Temp - pred)
+
+(SSE_simple_model = sum(climate_train$error_simple^2))
+
+(RMSE_simple_model = sqrt(SSE_simple_model)/nrow(climate_train))
+```
+We can see that Simple Model has significantly less SSE and RMSE compared to Baseline model. 
+
+### Interpret model
+
+We're working with a single variable model and we can already see its much better than baseline model. Now lets interpret this model futher and see insights R can provide us about this model starting with plotting the model versus actual data points for a Temperature-Carbon-dioxide plot.
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+aug_model1 <- augment(model1, climate_train)
+
+ggplot(aug_model1, aes(CO2, Temp)) +
+  geom_point(color = "red") + 
+  geom_smooth(method = "lm", color = "blue", se = FALSE) +
+  geom_segment(aes(x = CO2, xend = CO2,
+                   y = Temp, yend = aug_model1$.fitted), alpha = 0.5) + 
+  ggtitle("Regression Error")
+```
+
+The `summary()` function provides a nice summary of relevant stats but accessing Estimates and R square values is not easy because `summary()` is not in a data frame or tibble format. Luckily, we can just do that using `tidy()` function from `broom` package. It's a very handy tool for writing reports or futher analysis.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+tidy(model1)
+```
+
+### Assessing accuracy
+There are few ways we can assess accuracy of the model built against the raw data. 
+
+1. RSE
+2. $R^2$
+3. F-statistics
+
+
+We can see that the $R^2$ is 0.6218 and adjusted $R^2$ is 0.6204 but we don't know if its better or not since we haven't build any other model. But we know its an improvement of ~62% over baseline model. We can look up all three values using `glance()` function from `broom()` package.
+```{r}
+glance(model1)
+```
+As we can see R-squared value is 0.62 (1 is perfect prediction), Residual Standard Error (RSE) is 0.11 (minimize as much as possible), and F-statistics is 463.59 (larger the better). 
+
+### Making Prediction
+We have our model ready, now we can use this model on to predict temperature changes on unseen data and assess its accuracy. 
+```{r echo=TRUE}
+climate_test <- climate_test %>%
+  add_predictions(model1)
+
+climate_test %>%
+  select(Temp, pred)
+```
+
+Calculate Mean Squared Error (MSE)
+```{r}
+# MSE (Mean Square Error)
+climate_test %>%
+  summarise(MSE = mean((Temp - pred)^2))
+```
+
+We're going to assess _model1_ in next section.
+
+## Multiple Linear Regression
+
+A Multiple Linear Regression is in the form of:
+  $$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + ….. + \beta_kX_k + \epsilon$$
+  
+### Model Building
+We can build a model where Temperature depends on all other variables except Year and Month. 
+```{r model using all variables, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+model2 <- lm(Temp ~ MEI + CO2 + CH4 + N2O + `CFC-11` + 
+               `CFC-12` + TSI + Aerosols, data = climate_train)
+```
+
+Lets take a look at the `summary()` of this model.
+```{r summary of model2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+summary(model2)
+```
+
+This is not a bad model. Our $R^2$ increased from 0.6218 to 0.7509 and there are few significant predictors. It appears to be a better model than the simple linear model, however, there is a problem associated with this model, _Collinearity_. Collinearity or Multicollinearity exists when there are two or more highly correlated variables in the predictor set. Because of this high collinearity among variables, it's difficult to explain the variation in the dataset and which variable caused it. In short, we need to deal with this issue and the easiest way is to drop one or few highly collinear variables. To calculate collinearity we can use inbuilt `cor()` function.
+
+```{r correlation matrix, message=FALSE, warning=FALSE, paged.print=FALSE}
+round(cor(climate_train), digits = 2)
+```
+
+We can clearly see that there are few highly collinear variables in the dataset. However, there is a better way to visualize collinearity matrix using `corrplot` package.
+
+```{r corrplot, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(corrplot)
+
+x <- cor(climate_train)
+corrplot.mixed(x, lower = "number", upper = "square", number.cex = 0.7,
+         order = "hclust")
+```
+
+We can see that variable $N_2O$ and $CH_4$ have high correlation with other variables, so we can drop them from the dataset and build another model.
+
+```{r model without multicollinearity, message=FALSE, warning=FALSE, paged.print=FALSE}
+model3 <- lm(Temp ~ MEI + CO2 + `CFC-11` + `CFC-12` + TSI + Aerosols, 
+                 data = climate_train)
+summary(model3)
+```
+
+There is another method in R to work through this. R provides a _step_ function which returns a model with optimized AIC. If we use _model2_ which contains all variables, _step_ will figure out which variables to drop to maximize the accuracy of the model.
+
+```{r model4 using step, message=FALSE, warning=FALSE, paged.print=FALSE}
+model4 <- step(model2)
+```
+
+### Assessing Model Numerically
+
+We can numerically compare quality of all four models. 
+```{r compare 4 models numerically, message=FALSE, warning=FALSE, paged.print=FALSE}
+list(model1 = broom::glance(model1), 
+     model2 = broom::glance(model2),
+     model3 = broom::glance(model3),
+     model4 = broom::glance(model4))
+```
+
+It is interesting to note that the step function does not address the collinearity of the variables, except that adding highly correlated variables will not improve the $R^2$ significantly. The consequence of this is that the step function will not necessarily produce a very interpretable model - just a model that has balanced quality and simplicity for a particular weighting of quality and simplicity (AIC). Looking at the data above its clear that  _model2_, _model3_ and _model4_ are roughly same in terms of quality. 
+
+Personally I'd use _model3_ for its interpretability and also because it addresses collinearity issue head on. 
+
+### Assessing Model visually
+
+So far we compared the models numerically which is great but we should also assess model strength visually. We will choose model3 for this analysis. In each model a visual study of residuals can provide valuable insights. 
+
+1. "Normality" of residuals
+```{r Residual Normal plot, message=FALSE, warning=FALSE, paged.print=FALSE}
+aug_model3 <- augment(model3, climate_train)
+
+ggplot(aug_model3, aes(.resid)) +
+  geom_histogram(aes(y = ..density..), color = "black", fill = "white") +
+  stat_function(fun = dnorm, color = "red",
+                args = list(mean = mean(aug_model3$.resid, na.rm = TRUE),
+                            sd = sd(aug_model3$.resid, na.rm = TRUE))) +
+  xlab("Residuals from model3")
+```
+
+The plot clearly shows that the "residuals" of the model follow normal distribution which is as per our expectation. 
+
+2. Residual vs. Fitted values
+```{r Residual vs Fitted, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(aug_model3, aes(.fitted, .resid)) +
+  geom_ref_line(h = 0) +
+  geom_point(aes(color = as.factor(Year)), alpha = 0.6) + 
+  geom_smooth(se = FALSE) + 
+  ggtitle("Residuals vs Fitted") +
+  xlab("Fitted values (Predictions)") + 
+  ylab("Residuals (Actual - Predicted values)") +
+  labs(color = "Year")
+```
+
+In this plot we expect a sort of horizontal line at .resid = 0 and equal and homogeneous distribution of points on either side of line. Above model satisfies both requirement. If there was a non-linear relationship between predictor variables and the response variable, it'd shows up in this plot.
+
+3. Standardized Residuals vs. Fitted values
+```{r std residuals vs fitted, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(aug_model3, aes(.fitted, .std.resid)) +
+  geom_ref_line(h = 0) +
+  geom_point(aes(color = as.factor(Year)), alpha = 0.6) +
+  geom_smooth(se = FALSE) + 
+  ggtitle("Standardized Residual vs Fitted") +
+  xlab("Fitted values (Predictions)") + 
+  ylab("Standardized Residuals") +
+  labs(color = "Year")
+```
+Interpretation  of above plot is similar to Residual vs. Fitted values
+
+4. Scale-Location Plot
+
+Scale-Location plot explains if the residuals are spread evenly along the range of predictors. This plot is used to check the assumption of equal variance (homoscedasticity). We have equally scattered points on both side of line and line is roughly horizontal and both of these two are good indicator of a robust and accurate model.
+
+```{r scale-location plot, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(aug_model3, aes(.fitted, sqrt(abs(.std.resid)))) +
+  geom_ref_line(h = 0) +
+  geom_point(aes(color = as.factor(Year)), alpha = 0.6) +
+  geom_smooth(se = FALSE) + 
+  ggtitle("Scale-Location")  +
+  xlab("Fitted values (Predictions)") + 
+  ylab("sqrt(Standardized Residuals)") +
+  labs(color = "Year")
+```
+
+5. Q-Q plot
+
+We plotted residuals to check for their normality in first plot of this section. We can also use Q-Q plot. If data points fall on an imaginary straight line that indicates normal distribution while any skewness is not a good sign. The plot clearly shows a normal distribution, there are some data points towards the head and tail observations which deviate from the normal line but that's not too bad. In real world data, this is expected.
+
+```{r Q-Q plot, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(aug_model3, aes(sample = .resid)) +
+  stat_qq(alpha = 0.3) +
+  stat_qq_line(color = "blue") + 
+  ggtitle("Normal Q-Q Plot") + 
+  xlab("Theoretical Quantiles") + 
+  ylab("Sample Quantiles")
+```
+
+
+6. Cook's distance and Residuals vs. Leverage
+
+In Regression we always look for _outliers_ with our belief being that outliers cause distortion to our model and must be avoided at all costs. However, that's nor true at all, infact outliers can explain something deep about the environment or structure of dataset and should be studied very carefully. Also outliers don't necessarily influence regression model as much as we think. Sometimes you'd notice that it doesn't matter if you include or exclude the outlier from the dataset, their impact is marginal. However there is another set of observations which may impact the quality of model even if you change the observation little bit. Obviously we're very interested in studying these observations and their impact. That's where this plot comes in picture. I'm using base R for these two plots.
+
+From Residual vs. Leverage plot we can't even see the Cook's distance line as all observations are well within Cook's distance lines. It indicates absence of any influential observation.
+
+```{r Cooks distance and Residuals vs Leverage, message=FALSE, warning=FALSE, paged.print=FALSE}
+plot(model3, which = 4, id.n = 5) # id.n identifies "n" top outlier observations
+plot(model3, which = 5, id.n = 5)
+```
+
+
+### Making Prediction
+
+Having analyzed the model on training data both, numerically and visually, we're now ready to make prediction on the testing dataset. We will use model3 for predictions.
+
+```{r predictions using model3, message=FALSE, warning=FALSE}
+(climate_test <- climate_test %>%
+  add_predictions(model3)) %>%
+  select(Temp, pred, everything())
+```
+
+Comparing MSE of model3 versus model1:
+
+```{r MSE for model3 and model1, message=FALSE, warning=FALSE, paged.print=FALSE}
+climate_test %>%
+  gather_predictions(model1, model3) %>%
+  group_by(model) %>%
+  summarise(MSE = mean((Temp-pred)^2))
+```
+
+This clearly shows that when we use _model1_ and _model3_ for out of sample prediction, _model3_ is still a much better model with very low MSE.
+
+## Conclusion
+In this post we learned:
+
+1. How to input data into R
+2. Create Simple and Multiple Linear Regression model 
+3. How to interpret a model both, numerically and visually 
+4. How to make predictions using the models
+
+Hope you enjoyed the post! Questions and Feedback are welcome.
